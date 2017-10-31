@@ -3,8 +3,7 @@
 
 Package to visualize common trends in Kepler/K2 data including rolling band noise and common periodic signals across channels.
 
-Usage
-=====
+Usage::
 
     from krill import krill
     k = krill(campaign=6)
