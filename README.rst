@@ -15,6 +15,13 @@ k.power()     #Build Power Spectrum
 k.rolling()   #Build rolling band image
 ```
 
+
+
+```python
+s = "Python syntax highlighting"
+print s
+```
+
 Dependencies
 ------------
 k2movie
