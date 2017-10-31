@@ -6,12 +6,12 @@ Package to visualize common trends in Kepler/K2 data including rolling band nois
 Usage
 =====
 
-  from krill import krill
-  k = krill(campaign=6)
-  k.build_cad()
-  k.build(channel=44)
-  k.power()     #Build Power Spectrum
-  k.rolling()   #Build rolling band image
+    from krill import krill
+    k = krill(campaign=6)
+    k.build_cad()
+    k.build(channel=44)
+    k.power()     #Build Power Spectrum
+    k.rolling()   #Build rolling band image
 
 Dependencies
 ------------
