@@ -10,6 +10,7 @@ import os
 from astropy.stats import LombScargle
 import astropy.units as u
 from tqdm import tqdm
+import pandas as pd
 
 from contextlib import contextmanager
 import warnings
@@ -34,7 +35,7 @@ class krill(object):
     def __init__(self,
                 campaign = 1,
                 cadence = None,
-                dir = '/Users/ch/K2/projects/krill/images/',
+                dir = '/Users/ch/K2/projects/krill/',
                 database_dir = '/Volumes/cupertino/database/',
                 verbose = False):
 
@@ -141,38 +142,38 @@ class krill(object):
             ax.set_yticklabels((ax.get_yticks()*12).astype(int))
             ax.set_aspect(3)
             ax.set_title('Campaign {} Channel {}'.format(self.campaign,self.channel),fontsize=20)
-            cdir='{}'.format(self.dir)+'c{0:02}/'.format(self.campaign)
+            cdir='{}images/'.format(self.dir)+'c{0:02}/'.format(self.campaign)
             if not os.path.isdir(cdir):
                 os.makedirs(cdir)
             img_name = '{}{}_{}.png'.format(cdir,self.channel,name)
             plt.savefig(img_name, dpi=200,bbox_inches='tight')
 
-    def power(self):
+    def power(self, n=400, r=2000, pmin=0.01, pmax=40.):
         '''Create a power spectrum of all pixels
         '''
-        f = np.linspace(1./(0.01*u.day).to(u.min),1./(40.*u.day).to(u.min),200)
-        par = np.zeros((len(self.pix),len(f)))
+        f = np.linspace(1./(pmin*u.day).to(u.min),1./(pmax*u.day).to(u.min),r)
+        f = np.sort(f)
+        top = np.argsort(np.nanmean(self.pix,axis=1))[::-1][0:n]
+        par = np.zeros((n,len(f)))
         x = self.cadence*29.42*u.min
-        for i,p in enumerate(self.pix):
+        for i,p in enumerate(self.pix[top,:]):
             ok = np.isfinite(p)
             par[i,:]=LombScargle(x[ok],p[ok],dy=1).power(f)
         fig = plt.figure(figsize=(7,7))
-        cmap = plt.get_cmap('inferno')
-        plt.imshow(np.log10(par).T,origin='bottom', cmap=cmap, vmin=-4, vmax=0)
-        plt.gca().set_aspect(120)
-        yt = plt.gca().get_yticks()
-        _=plt.gca().set_yticklabels(np.round(np.interp(yt,np.arange(len(f)),f.to(1./u.day)),2))
-        plt.ylabel('Frequency (day$^{-1})$',fontsize=15)
-        plt.xlabel('Pixel Number',fontsize=15)
+        cmap = plt.get_cmap('viridis')
+        X,Y=np.meshgrid(f, np.arange(n))
+        plt.contourf((1./X), Y, np.log10(par), cmap=cmap, vmin=-4, vmax=0)
+        plt.xscale('log')
+        plt.xlabel('Period (Minutes)',fontsize=15)
+        plt.ylabel('Pixel Number',fontsize=15)
         plt.title('Campaign {} Channel {}'.format(self.campaign,self.channel),fontsize=20)
         cbar = plt.colorbar()
         cbar.set_label('log$_{10}$(Power)',fontsize=15)
-        cdir='{}'.format(self.dir)+'c{0:02}/'.format(self.campaign)
+        cdir='{}images/'.format(self.dir)+'c{0:02}/'.format(self.campaign)
         if not os.path.isdir(cdir):
             os.makedirs(cdir)
         img_name = '{}{}_PS.png'.format(cdir,self.channel)
         plt.savefig(img_name, dpi=200,bbox_inches='tight')
-
 
 def run(campaigns=np.arange(1,8)):
     for campaign in campaigns:
@@ -183,4 +184,4 @@ def run(campaigns=np.arange(1,8)):
             with silence():
                 k.build(ch)
                 k.rolling()
-                k.power()
+                #k.power()
