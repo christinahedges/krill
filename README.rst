@@ -1,5 +1,5 @@
-:shrimp:: Finding small bodied problems that are everywhere
-===========================================================
+:shrimp:: Finding small trends that are everywhere
+==================================================
 
 Package to visualize common trends in K2 data including rolling band noise and common periodic signals across channels. You will need to use K2movie to generate a database of K2 data to run this script.
 
