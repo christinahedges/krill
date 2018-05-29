@@ -22,7 +22,7 @@ def run():
             krill(campaign, ch)
 
 
-def krill(campaign, ch, overwrite=True, dir='../images/'):
+def krill(campaign, ch, overwrite=False, dir='../images/'):
     cdir = '{}'.format(dir)+'c{0:02}/'.format(campaign)
     if not os.path.isdir(cdir):
         os.makedirs(cdir)
@@ -31,13 +31,13 @@ def krill(campaign, ch, overwrite=True, dir='../images/'):
         os.makedirs(edir)
     if (os.path.isfile('{}'.format(edir)+'row_c{0:02}_ch{1:02}.png'.format(campaign, ch))):
         if overwrite == False:
-            log.info(
+            log.warning(
                 'File C{0:02} Ch{1:02} Exists. Set overwrite to True.'.format(campaign, ch))
             return
 
     fname = '{0}c{1:02}/{2:02}/k2movie_c{1:02}_ch{2:02}.h5'.format(DATA_DIR, campaign, ch)
     if not os.path.isfile(fname):
-        log.info('C{} CH{}: No File'.format(campaign, ch))
+        log.warning('C{} CH{}: No File'.format(campaign, ch))
         return
     df = dd.read_hdf(fname, 'table')
     # No pixels inside pipeline apertures
