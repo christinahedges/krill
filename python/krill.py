@@ -46,7 +46,7 @@ def krill(campaign, ch, overwrite=False, dir='../images/'):
     # No cadences where there was only NaNs
     cad = list(df.columns[5:])
     tmean = np.asarray(df[cad].mean(axis=0, skipna=True).compute())
-    ok = np.abs(tmean - np.median(tmean[tmean != 0])) < 3 * np.std(tmean[tmean != 0])
+    ok = np.abs(tmean - np.nanmedian(tmean[tmean != 0])) < 3 * np.nanstd(tmean[tmean != 0])
     cad = np.asarray(df.columns[5:])[ok]
     cad = list(np.append(np.asarray(['Row', 'Column']), cad))
     df = df[cad]
@@ -66,6 +66,8 @@ def krill(campaign, ch, overwrite=False, dir='../images/'):
     # Group by column and row
     col = df.groupby('Column').mean().compute()
     row = df.groupby('Row').mean().compute()
+#    import pdb
+#    pdb.set_trace()
     col = col[col.columns[1:-3]]
     row = row[row.columns[1:-3]]
 
