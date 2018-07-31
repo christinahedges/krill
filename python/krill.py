@@ -15,7 +15,7 @@ WCS_DIR = '/Users/ch/K2/projects/k2movie/k2movie/data/wcs/'
 
 
 def run():
-    campaigns = np.arange(9)
+    campaigns = [91, 92, 101, 102, 111, 112, 12]
     channels = np.arange(1, 85)
     for campaign in campaigns:
         for ch in channels:
